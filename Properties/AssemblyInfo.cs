@@ -26,3 +26,4 @@ using AssetBankPlugin;
 
 [assembly: RegisterOptionsExtension(typeof(AnimationOptions))]
 [assembly: RegisterAssetDefinition("AntStateAsset", typeof(AntStateAssetDefinition))]
+[assembly: RegisterAssetDefinition("AntAnimationSetAsset", typeof(AntAnimationSetAssetDefinition))]

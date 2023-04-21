@@ -24,5 +24,16 @@ namespace AssetBankPlugin.Ant
                 return Refs[InternalRefs[refId]];
             }
         }
+
+        public static bool TryGet(Guid refId, out AntAsset result)
+        {
+            if(Refs.ContainsKey(refId))
+            {
+                result = Refs[refId];
+                return true;
+            }
+            result = null;
+            return false;
+        }
     }
 }

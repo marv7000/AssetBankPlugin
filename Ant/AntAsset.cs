@@ -3,6 +3,7 @@ using AssetBankPlugin.GenericData;
 using FrostySdk.IO;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Windows;
 
 namespace AssetBankPlugin.Ant
@@ -12,9 +13,11 @@ namespace AssetBankPlugin.Ant
         public abstract string Name { get; set; }
         public abstract Guid ID { get; set; }
 
+        public Bank Bank { get; set; }
+
         public abstract void SetData(Dictionary<string, object> data);
 
-        public static AntAsset Deserialize(NativeReader r, SectionData section, Dictionary<uint, GenericClass> classes)
+        public static AntAsset Deserialize(NativeReader r, SectionData section, Dictionary<uint, GenericClass> classes, Bank bank)
         {
             r.BaseStream.Position = section.DataOffset;
             r.ReadDataHeader(section.Endianness, out uint hash, out uint type, out uint offset);
@@ -46,6 +49,7 @@ namespace AssetBankPlugin.Ant
             if (assetType != null)
             {
                 AntAsset asset = (AntAsset)Activator.CreateInstance(assetType);
+                asset.Bank = bank;
                 asset.SetData(values);
 
                 AntRefTable.Add(asset);

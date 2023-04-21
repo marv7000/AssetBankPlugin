@@ -3,6 +3,7 @@ using AssetBankPlugin.Export;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Linq;
 
 namespace AssetBankPlugin.Ant
 {
@@ -104,10 +105,13 @@ namespace AssetBankPlugin.Ant
                 // We need to differentiate between Scale and Position.
                 for (int channelIdx = 0; channelIdx < NumVec3; channelIdx++)
                 {
-                    int pos = (int)(i * dofCount + NumQuats + channelIdx);
-                    Vector4 element = DecompressedData[pos];
+                    if (Channels.ElementAt(NumQuats + channelIdx).Value == BoneChannelType.Position)
+                    {
+                        int pos = (int)(i * dofCount + NumQuats + channelIdx);
+                        Vector4 element = DecompressedData[pos];
 
-                    positions.Add(new Vector3(element.X, element.Y, element.Z));
+                        positions.Add(new Vector3(element.X, element.Y, element.Z));
+                    }
                 }
 
                 frame.Rotations = rotations;

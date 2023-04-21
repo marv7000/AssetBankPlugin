@@ -53,8 +53,8 @@ namespace AssetBankPlugin.GenericData
                         }
                         else
                         {
-                            uint size = r.ReadUInt(Endianness);
                             uint capacity = r.ReadUInt(Endianness);
+                            uint size = r.ReadUInt(Endianness);
                             long offset = r.ReadLong(Endianness);
                             r.BaseStream.Position = DataOffset + offset;
                             fieldData = r.ReadByteArray((int)size);
@@ -67,8 +67,8 @@ namespace AssetBankPlugin.GenericData
                         }
                         else
                         {
-                            uint size = r.ReadUInt(Endianness);
                             uint capacity = r.ReadUInt(Endianness);
+                            uint size = r.ReadUInt(Endianness);
                             long offset = r.ReadLong(Endianness);
                             r.BaseStream.Position = DataOffset + offset;
                             fieldData = r.ReadSByteArray((int)size);
@@ -81,8 +81,8 @@ namespace AssetBankPlugin.GenericData
                         }
                         else
                         {
-                            uint size = r.ReadUInt(Endianness);
                             uint capacity = r.ReadUInt(Endianness);
+                            uint size = r.ReadUInt(Endianness);
                             long offset = r.ReadLong(Endianness);
                             r.BaseStream.Position = DataOffset + offset;
                             fieldData = r.ReadShortArray((int)size, Endianness);
@@ -95,8 +95,8 @@ namespace AssetBankPlugin.GenericData
                         }
                         else
                         {
-                            uint size = r.ReadUInt(Endianness);
                             uint capacity = r.ReadUInt(Endianness);
+                            uint size = r.ReadUInt(Endianness);
                             long offset = r.ReadLong(Endianness);
                             r.BaseStream.Position = DataOffset + offset;
                             fieldData = r.ReadIntArray((int)size, Endianness);
@@ -109,8 +109,8 @@ namespace AssetBankPlugin.GenericData
                         }
                         else
                         {
-                            uint size = r.ReadUInt(Endianness);
                             uint capacity = r.ReadUInt(Endianness);
+                            uint size = r.ReadUInt(Endianness);
                             long offset = r.ReadLong(Endianness);
                             r.BaseStream.Position = DataOffset + offset;
                             fieldData = r.ReadLongArray((int)size, Endianness);
@@ -123,8 +123,8 @@ namespace AssetBankPlugin.GenericData
                         }
                         else
                         {
-                            uint size = r.ReadUInt(Endianness);
                             uint capacity = r.ReadUInt(Endianness);
+                            uint size = r.ReadUInt(Endianness);
                             long offset = r.ReadLong(Endianness);
                             r.BaseStream.Position = DataOffset + offset;
                             fieldData = r.ReadUShortArray((int)size, Endianness);
@@ -137,8 +137,8 @@ namespace AssetBankPlugin.GenericData
                         }
                         else
                         {
-                            uint size = r.ReadUInt(Endianness);
                             uint capacity = r.ReadUInt(Endianness);
+                            uint size = r.ReadUInt(Endianness);
                             long offset = r.ReadLong(Endianness);
                             r.BaseStream.Position = DataOffset + offset;
                             fieldData = r.ReadUIntArray((int)size, Endianness);
@@ -151,8 +151,8 @@ namespace AssetBankPlugin.GenericData
                         }
                         else
                         {
-                            uint size = r.ReadUInt(Endianness);
                             uint capacity = r.ReadUInt(Endianness);
+                            uint size = r.ReadUInt(Endianness);
                             long offset = r.ReadLong(Endianness);
                             r.BaseStream.Position = DataOffset + offset;
                             fieldData = r.ReadULongArray((int)size, Endianness);
@@ -165,8 +165,8 @@ namespace AssetBankPlugin.GenericData
                         }
                         else
                         {
-                            uint size = r.ReadUInt(Endianness);
                             uint capacity = r.ReadUInt(Endianness);
+                            uint size = r.ReadUInt(Endianness);
                             long offset = r.ReadLong(Endianness);
                             r.BaseStream.Position = DataOffset + offset;
                             fieldData = r.ReadSingleArray((int)size, Endianness);
@@ -179,8 +179,8 @@ namespace AssetBankPlugin.GenericData
                         }
                         else
                         {
-                            uint size = r.ReadUInt(Endianness);
                             uint capacity = r.ReadUInt(Endianness);
+                            uint size = r.ReadUInt(Endianness);
                             long offset = r.ReadLong(Endianness);
                             r.BaseStream.Position = DataOffset + offset;
                             fieldData = r.ReadDoubleArray((int)size, Endianness);
@@ -193,8 +193,8 @@ namespace AssetBankPlugin.GenericData
                         }
                         else
                         {
-                            uint size = r.ReadUInt(Endianness);
                             uint capacity = r.ReadUInt(Endianness);
+                            uint size = r.ReadUInt(Endianness);
                             long offset = r.ReadLong(Endianness);
                             r.BaseStream.Position = DataOffset + offset;
                             fieldData = r.ReadGuidArray((int)size, Endianness);
@@ -203,8 +203,8 @@ namespace AssetBankPlugin.GenericData
                     case "String":
                         if (!field.IsArray)
                         {
-                            uint size = r.ReadUInt(Endianness);
                             uint capacity = r.ReadUInt(Endianness);
+                            uint size = r.ReadUInt(Endianness);
                             long offset = r.ReadLong(Endianness);
                             r.BaseStream.Position = DataOffset + offset;
                             fieldData = r.ReadSizedString((int)size);
@@ -217,8 +217,8 @@ namespace AssetBankPlugin.GenericData
                         }
                         else
                         {
-                            uint size = r.ReadUInt(Endianness);
                             uint capacity = r.ReadUInt(Endianness);
+                            uint size = r.ReadUInt(Endianness);
                             long offset = r.ReadLong(Endianness);
                             r.BaseStream.Position = DataOffset + offset;
                             fieldData = r.ReadGuidArray((int)size, Endianness);
@@ -231,8 +231,8 @@ namespace AssetBankPlugin.GenericData
                         }
                         else
                         {
-                            uint size = r.ReadUInt(Endianness);
                             uint capacity = r.ReadUInt(Endianness);
+                            uint size = r.ReadUInt(Endianness);
                             long offset = r.ReadLong(Endianness);
                             fieldData = new Dictionary<string, object>[size];
                             for (uint i = 0; i < size; i++)

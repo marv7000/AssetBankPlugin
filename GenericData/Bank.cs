@@ -45,7 +45,8 @@ namespace AssetBankPlugin.GenericData
             uint headerSize;
 
             // Some AntPackages seem to have no header. In that case, jump directly to reading the sections.
-            bool hasHeader = r.ReadSizedString(3) != "GD.";
+            string str = r.ReadSizedString(3);
+            bool hasHeader = str != "GD.";
             r.BaseStream.Position -= 3;
             if (hasHeader)
                 headerSize = r.ReadUInt(Endian.Big);
@@ -75,7 +76,7 @@ namespace AssetBankPlugin.GenericData
                 }
                 else if (section is SectionData dataSection)
                 {
-                    var asset = AntAsset.Deserialize(r, dataSection, Classes);
+                    var asset = AntAsset.Deserialize(r, dataSection, Classes, this);
                     if (asset != null)
                     {
                         Data.Add(asset.ID, asset);
