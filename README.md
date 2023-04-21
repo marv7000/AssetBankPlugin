@@ -1,7 +1,17 @@
 # AssetBankPlugin
 A plugin for Frosty Toolsuite that adds AssetBank reading support for all major Frostbite titles.
 
-# Supported Formats
+# Supported Animation Codecs
+| Name | Support |
+| --- | --- |
+| RawAnimation | ✅ |
+| FrameAnimation | ✅ |
+| DctAnimation | ✅ |
+| CurveAnimation | ✅ |
+| VbrAnimation | ❌ |
+
+
+# Supported Export Formats
 | Name | Extension |
 | --- | --- |
 | FBX | .fbx |
