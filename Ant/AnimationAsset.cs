@@ -63,9 +63,13 @@ namespace AssetBankPlugin.Ant
             ClipControllerData clip = null;
             foreach (var c in AntRefTable.Refs)
             {
-                if (c.Value is ClipControllerData cl && cl.Target == channelToDofAsset)
+                if (c.Value is ClipControllerData cl)
                 {
-                    clip = cl;
+                    if (cl.Anim == ID || cl.Anim == AntRefTable.InternalRefs[ID])
+                    {
+                        clip = cl;
+                        break;
+                    }
                 }
             }
 

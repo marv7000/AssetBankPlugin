@@ -25,15 +25,8 @@ namespace AssetBankPlugin
 
         public override bool Export(EbxAssetEntry entry, string path, string filterType)
         {
-            ExportInternal(entry);
-
-            return true;
-        }
-
-        public void ExportInternal(EbxAssetEntry entry)
-        {
             // Get the Ebx.
-            EbxAsset asset = App.AssetManager.GetEbx(entry); 
+            EbxAsset asset = App.AssetManager.GetEbx(entry);
             dynamic antStateAsset = (dynamic)asset.RootObject;
             // Get the Chunk.
             Stream s;
@@ -59,16 +52,19 @@ namespace AssetBankPlugin
                 dynamic skel = (dynamic)skelEbx.RootObject;
 
                 var skeleton = SkeletonAsset.ConvertToInternal(skel);
-                //foreach (var anim in bank.Data)
-                //{
-                //    var intern = anim.Value.ConvertToInternal();
-                //    new AnimationExporterSEANIM().Export(intern, skeleton, @"D:\");
-                //}
+                foreach (var dat in bank.Data)
+                {
+                    if (dat.Value is AnimationAsset anim)
+                    {
+                        var intern = anim.ConvertToInternal();
+                        new AnimationExporterSEANIM().Export(intern, skeleton, Path.GetDirectoryName(path));
+                    }
+                }
             }
 
-            Console.WriteLine(AntRefTable.Refs);
+            MessageBox.Show($"Exported {entry.Name} for {ProfilesLibrary.ProfileName}", "Test");
 
-            MessageBox.Show($"Exporting {entry.Name} for {ProfilesLibrary.ProfileName} AntStateAsset", "Test");
+            return true;
         }
     }
 }

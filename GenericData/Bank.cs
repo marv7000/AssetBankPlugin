@@ -20,6 +20,27 @@ namespace AssetBankPlugin.GenericData
         {
             PackagingType = (AntPackagingType)r.ReadUInt(Endian.Big);
 
+            // AnimationSets have special AntRef mappings (Guid followed by AntRefId).
+            if (PackagingType == AntPackagingType.AnimationSet)
+            {
+                r.BaseStream.Position = 56;
+                uint antRefMapCount = r.ReadUInt(Endian.Big) / 20;
+
+                for (int i = 0; i < antRefMapCount; i++)
+                {
+                    Guid a = r.ReadGuid();
+                    byte[] bytes = new byte[16];
+                    bytes[0] = r.ReadByte();
+                    bytes[1] = r.ReadByte();
+                    bytes[2] = r.ReadByte();
+                    bytes[3] = r.ReadByte();
+
+                    Guid b = new Guid(bytes);
+                    AntRefTable.InternalRefs[a] = b;
+                }
+                r.BaseStream.Position = 4;
+            }
+
             uint headerStart = (uint)r.BaseStream.Position;
             uint headerSize;
 
