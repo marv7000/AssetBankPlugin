@@ -44,11 +44,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\leveleditorFrosty\FrostyToolsuite-1.0.7\FrostyControls\FrostyControls.csproj" />
-    <ProjectReference Include="..\..\leveleditorFrosty\FrostyToolsuite-1.0.7\FrostyHash\FrostyHash.vcxproj" />
-    <ProjectReference Include="..\..\leveleditorFrosty\FrostyToolsuite-1.0.7\FrostyPlugin\FrostyCore.csproj" />
-    <ProjectReference Include="..\..\leveleditorFrosty\FrostyToolsuite-1.0.7\FrostySdk\FrostySdk.csproj" />
-    <ProjectReference Include="..\..\leveleditorFrosty\FrostyToolsuite-1.0.7\Plugins\MeshSetPlugin\MeshSetPlugin.csproj" />
+    <ProjectReference Include="..\..\FrostyControls\FrostyControls.csproj">
+      <Private>false</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\FrostyHash\FrostyHash.vcxproj">
+      <Private>false</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\FrostyPlugin\FrostyCore.csproj">
+      <Private>false</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\FrostySdk\FrostySdk.csproj">
+      <Private>false</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\MeshSetPlugin\MeshSetPlugin.csproj" />
   </ItemGroup>
 
   <ItemGroup>

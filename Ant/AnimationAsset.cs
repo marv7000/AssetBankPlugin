@@ -3,11 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AssetBankPlugin.Enums;
 using AssetBankPlugin.Export;
-using AssetBankPlugin.GenericData;
-using Frosty.Core;
 using FrostySdk;
-using FrostySdk.IO;
-using FrostySdk.Managers.Entries;
 
 namespace AssetBankPlugin.Ant
 {
@@ -44,78 +40,60 @@ namespace AssetBankPlugin.Ant
                 Additive = (bool)additive;
             }
             ChannelToDofAsset = (Guid)data["ChannelToDofAsset"];
-            //Channels = GetChannels(ChannelToDofAsset);
         }
 
         public Dictionary<string, BoneChannelType> GetChannels(Guid channelToDofAsset)
         {
-            // Get bone mapping table.
-            var opt = new AnimationOptions();
-            opt.Load();
-            ResAssetEntry antStateEntry = App.AssetManager.GetResEntry(opt.AntStateAsset);
-            Bank antStateBank;
-            if (antStateEntry != null)
-            {
-                var antBank = App.AssetManager.GetRes(antStateEntry);
-                var r = new NativeReader(antBank);
-                antStateBank = new Bank(r);
-            }
-
-            // Get the ChannelToDofAsset referenced by the Animation.
-            ChannelToDofAsset dof;
-            if(ProfilesLibrary.IsLoaded(ProfileVersion.PlantsVsZombiesGardenWarfare2))
-            {
-                dof = (ChannelToDofAsset)Bank.Data[ChannelToDofAsset];
-            }
-            else
-            {
-                dof = (ChannelToDofAsset)AntRefTable.Get(channelToDofAsset);
-                StorageType = dof.StorageType;
-            }
-
             // Find the ClipControllerAsset which references the Animation.
-            dynamic clip = null;
+            LayoutHierarchyAsset hierarchy = null;
+            ChannelToDofAsset dof;
 
-            switch((ProfileVersion)ProfilesLibrary.DataVersion)
+            switch ((ProfileVersion)ProfilesLibrary.DataVersion)
             {
                 case ProfileVersion.PlantsVsZombiesGardenWarfare2:
-                    foreach (var c in AntRefTable.Refs)
+                case ProfileVersion.Battlefield1:
                     {
-                        if (c.Value is ClipControllerAsset cl)
+                        dof = (ChannelToDofAsset)AntRefTable.Get(ChannelToDofAsset);
+                        foreach (var c in AntRefTable.Refs)
                         {
-                            if(cl.Anims.Contains(ID) || AntRefTable.TryGet(ID, out AntAsset clAsset))
+                            if (c.Value is ClipControllerAsset cl)
                             {
-                                clip = cl;
-                                break;
+                                if (cl.Anims.Contains(ID))
+                                {
+                                    FPS = cl.FPS;
+                                    hierarchy = (LayoutHierarchyAsset)AntRefTable.Get(cl.Target);
+                                    break;
+                                }
                             }
                         }
                     }
-                    FPS = clip.FPS;
                     break;
+                case ProfileVersion.Battlefield4:
                 default:
-                    foreach (var c in AntRefTable.Refs)
                     {
-                        if (c.Value is ClipControllerData cl)
+                        dof = (ChannelToDofAsset)AntRefTable.Get(channelToDofAsset);
+                        StorageType = dof.StorageType;
+                        foreach (var c in AntRefTable.Refs)
                         {
-                            if (cl.Anim == ID || cl.Anim == AntRefTable.InternalRefs[ID])
+                            if (c.Value is ClipControllerData cl)
                             {
-                                clip = cl;
-                                break;
+                                if (cl.Anim == ID || cl.Anim == AntRefTable.InternalRefs[ID])
+                                {
+                                    FPS = cl.FPS;
+                                    hierarchy = (LayoutHierarchyAsset)AntRefTable.Get(cl.Target);
+                                    break;
+                                }
                             }
                         }
                     }
-                    FPS = clip.FPS;
                     break;
             }
-
-            // Get the LayoutHierarchyAsset Guid from the ClipController.
-            LayoutHierarchyAsset hierarchy = (LayoutHierarchyAsset)AntRefTable.Get(clip.Target);
 
             // Loop through all LayoutAssets and append them.
             var channelNames = new Dictionary<string, BoneChannelType>();
             for (int i = 0; i < hierarchy.LayoutAssets.Length; i++)
             {
-                Object layoutAsset = AntRefTable.Get(hierarchy.LayoutAssets[i]);
+                AntAsset layoutAsset = AntRefTable.Get(hierarchy.LayoutAssets[i]);
 
                 if(layoutAsset is LayoutAsset la)
                 {

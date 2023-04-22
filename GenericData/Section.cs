@@ -1,4 +1,5 @@
-﻿using FrostySdk.IO;
+﻿using Frosty.Controls;
+using FrostySdk.IO;
 
 namespace AssetBankPlugin.GenericData
 {
@@ -32,6 +33,9 @@ namespace AssetBankPlugin.GenericData
                     break;
                 case SectionData.Identifier:
                     result = new SectionData(r, endian);
+                    break;
+                default:
+                    FrostyMessageBox.Show($"Unknown BlockType: {blockType}");
                     break;
             }
 

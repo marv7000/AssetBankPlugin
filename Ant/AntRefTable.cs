@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Frosty.Core;
+using Frosty.Core.Controls;
+using System;
 using System.Collections.Generic;
 
 namespace AssetBankPlugin.Ant
@@ -13,27 +15,53 @@ namespace AssetBankPlugin.Ant
             Refs[asset.ID] = asset;
         }
 
-        public static AntAsset Get(Guid refId)
+        public static AntAsset Get(Guid refId, bool recurse = false)
         {
             if (Refs.TryGetValue(refId, out var guid))
             {
                 return guid;
             }
+            else if (InternalRefs.ContainsKey(refId))
+            {
+                if (Refs.TryGetValue(InternalRefs[refId], out var internalGuid))
+                {
+                    return internalGuid;
+                }
+                else
+                {
+                    return null;
+                }
+            }
             else
             {
-                return Refs[InternalRefs[refId]];
-            }
-        }
+                if (recurse)
+                {
+                    // If we still land here after loading the cached bundle, then we couldn't find the requested AntRef
+                    // and something has gone terribly wrong.
+                    return null;
+                }
+                else
+                {
+                    int bundleId;
+                    if (Cache.AntStateBundleIndices.ContainsKey(refId))
+                    {
+                        bundleId = Cache.AntStateBundleIndices[refId];
+                    }
+                    else if (Cache.AntRefMap.ContainsKey(refId) && Cache.AntStateBundleIndices.ContainsKey(Cache.AntRefMap[refId]))
+                    {
+                        bundleId = Cache.AntStateBundleIndices[Cache.AntRefMap[refId]];
+                    }
+                    else
+                    {
+                        FrostyExceptionBox.Show(new KeyNotFoundException($"Could not find AntRef {refId}, rebuilding the AntRef cache might fix this."), "Animation Export Error"); 
+                        return null;
+                    }
+                    var bundle = App.AssetManager.GetBundleEntry(bundleId);
+                    AntStateAssetDefinition.LoadAntStateFromBundle(bundle);
 
-        public static bool TryGet(Guid refId, out AntAsset result)
-        {
-            if(Refs.ContainsKey(refId))
-            {
-                result = Refs[refId];
-                return true;
+                    return Get(refId, true);
+                }
             }
-            result = null;
-            return false;
         }
     }
 }

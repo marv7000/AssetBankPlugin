@@ -2,7 +2,6 @@
 using FrostySdk;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace AssetBankPlugin.Ant
 {
@@ -11,7 +10,7 @@ namespace AssetBankPlugin.Ant
         public override string Name { get; set; }
         public override Guid ID { get; set; }
 
-        public StorageType StorageType { get; set; }
+        public StorageType StorageType { get; set; } = StorageType.Overwrite;
         public uint[] IndexData { get; set; }
 
         public override void SetData(Dictionary<string, object> data)
@@ -19,15 +18,22 @@ namespace AssetBankPlugin.Ant
             Name = Convert.ToString(data["__name"]);
             ID = (Guid)data["__guid"];
 
-            if(ProfilesLibrary.IsLoaded(ProfileVersion.PlantsVsZombiesGardenWarfare2))
+            switch ((ProfileVersion)ProfilesLibrary.DataVersion)
             {
-                ushort[] dofIds = (ushort[])data["DofIds"];
-                IndexData = Array.ConvertAll(dofIds, val => checked((uint)val));
-            }
-            else
-            {
-                StorageType = (StorageType)Convert.ToInt32(data["StorageType"]);
-                IndexData = (data["IndexData"] as Array).Cast<uint>().ToArray();
+                case ProfileVersion.PlantsVsZombiesGardenWarfare2:
+                case ProfileVersion.Battlefield1:
+                {
+                    ushort[] dofIds = (ushort[])data["DofIds"];
+                    IndexData = Array.ConvertAll(dofIds, val => checked((uint)val));
+                } break;
+                case ProfileVersion.Battlefield4:
+                {
+                    StorageType = (StorageType)Convert.ToInt32(data["StorageType"]);
+                    var dofIds = (byte[])data["IndexData"];
+                    IndexData = Array.ConvertAll(dofIds, val => checked((uint)val));
+                } break;
+
+                default: throw new NotImplementedException();
             }
         }
     }

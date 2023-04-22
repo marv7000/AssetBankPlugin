@@ -2,7 +2,7 @@
 using AssetBankPlugin.Export;
 using Frosty.Core;
 using FrostySdk.IO;
-using FrostySdk.Managers.Entries;
+using FrostySdk.Managers;
 using FrostySdk;
 using System;
 using System.Collections.Generic;
@@ -46,7 +46,7 @@ namespace AssetBankPlugin
 
             using (var r = new NativeReader(s))
             {
-                var bank = new Bank(r);
+                var bank = new Bank(r, 0);
 
                 var opt = new AnimationOptions();
                 opt.Load();
@@ -56,15 +56,15 @@ namespace AssetBankPlugin
                 dynamic skel = (dynamic)skelEbx.RootObject;
 
                 var skeleton = SkeletonAsset.ConvertToInternal(skel);
-                foreach (var dat in bank.Data)
-                {
-                    if (dat.Value is AnimationAsset anim)
-                    {
-                        anim.Channels = anim.GetChannels(anim.ChannelToDofAsset);
-                        var intern = anim.ConvertToInternal();
-                        new AnimationExporterSEANIM().Export(intern, skeleton, Path.GetDirectoryName(path));
-                    }
-                }
+                //foreach (var dat in bank)
+                //{
+                //    if (dat.Value is AnimationAsset anim)
+                //    {
+                //        anim.Channels = anim.GetChannels(anim.ChannelToDofAsset);
+                //        var intern = anim.ConvertToInternal();
+                //        new AnimationExporterSEANIM().Export(intern, skeleton, Path.GetDirectoryName(path));
+                //    }
+                //}
             }
 
             MessageBox.Show($"Exported {entry.Name} for {ProfilesLibrary.ProfileName}", "Test");

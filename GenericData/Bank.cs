@@ -1,5 +1,6 @@
 ﻿using AssetBankPlugin.Ant;
 using AssetBankPlugin.Enums;
+using FrostySdk;
 using FrostySdk.IO;
 using System;
 using System.Collections.Generic;
@@ -8,37 +9,46 @@ namespace AssetBankPlugin.GenericData
 {
     public class Bank
     {
-        public AntPackagingType PackagingType { get; set; }
+        // Not an enum because it differs between games.
+        public uint PackagingType { get; set; }
         // Raw Sections
         public List<Section> Sections { get; set; } = new List<Section>();
         // Deserialized Sections
         public Dictionary<uint, GenericClass> Classes { get; set; } = new Dictionary<uint, GenericClass>();
-        public Dictionary<Guid, AntAsset> Data { get; set; } = new Dictionary<Guid, AntAsset> { };
         public Dictionary<string, Guid> DataNames { get; set; } = new Dictionary<string, Guid>();
 
-        public Bank(NativeReader r)
+        public Bank(NativeReader r, int bundleId)
         {
-            PackagingType = (AntPackagingType)r.ReadUInt(Endian.Big);
+            PackagingType = r.ReadUInt(Endian.Big);
 
-            // AnimationSets have special AntRef mappings (Guid followed by AntRefId).
-            if (PackagingType == AntPackagingType.AnimationSet)
+            switch ((ProfileVersion)ProfilesLibrary.DataVersion)
             {
-                r.BaseStream.Position = 56;
-                uint antRefMapCount = r.ReadUInt(Endian.Big) / 20;
+                case ProfileVersion.Battlefield4:
+                case ProfileVersion.Battlefield1:
+                    {
+                        // AnimationSets have special AntRef mappings (Guid followed by AntRefId).
+                        if (PackagingType == 3)
+                        {
+                            r.BaseStream.Position = 56;
+                            uint antRefMapCount = r.ReadUInt(Endian.Big) / 20;
 
-                for (int i = 0; i < antRefMapCount; i++)
-                {
-                    Guid a = r.ReadGuid();
-                    byte[] bytes = new byte[16];
-                    bytes[0] = r.ReadByte();
-                    bytes[1] = r.ReadByte();
-                    bytes[2] = r.ReadByte();
-                    bytes[3] = r.ReadByte();
+                            for (int i = 0; i < antRefMapCount; i++)
+                            {
+                                Guid a = r.ReadGuid();
+                                byte[] bytes = new byte[16];
+                                bytes[0] = r.ReadByte();
+                                bytes[1] = r.ReadByte();
+                                bytes[2] = r.ReadByte();
+                                bytes[3] = r.ReadByte();
 
-                    Guid b = new Guid(bytes);
-                    AntRefTable.InternalRefs[a] = b;
-                }
-                r.BaseStream.Position = 4;
+                                Guid b = new Guid(bytes);
+                                AntRefTable.InternalRefs[a] = b;
+                                Cache.AntRefMap[a] = b;
+                            }
+                            r.BaseStream.Position = 4;
+                        }
+                    }
+                    break;
             }
 
             uint headerStart = (uint)r.BaseStream.Position;
@@ -79,7 +89,6 @@ namespace AssetBankPlugin.GenericData
                     var asset = AntAsset.Deserialize(r, dataSection, Classes, this);
                     if (asset != null)
                     {
-                        Data.Add(asset.ID, asset);
                         int index = 0;
                         string name = asset.Name;
                         while (DataNames.ContainsKey(name))
@@ -88,14 +97,10 @@ namespace AssetBankPlugin.GenericData
                             index++;
                         }
                         DataNames.Add(name, asset.ID);
+                        Cache.AntStateBundleIndices[asset.ID] = bundleId;
                     }
                 }
             }
-        }
-
-        public AntAsset GetAsset(string name)
-        {
-            return Data[DataNames[name]];
         }
     }
 }
