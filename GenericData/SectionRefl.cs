@@ -84,7 +84,7 @@ namespace AssetBankPlugin.GenericData
                 Classes.Add(gdLayout[i].mHash, cl);
             }
 
-            r.Align(4);
+            r.Pad(4);
 
             // Type table
             int typeTableSize = r.ReadInt(endian);
